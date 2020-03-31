@@ -8,7 +8,6 @@ exports.getDecodePhrase = (phrase, number) => {
     for (let i = 0; i < phrase.length; i++) {
         const code = phrase.charCodeAt(i)
         let c = ''
-
         if (code >= 65 && code <= 90) {
             c = String.fromCharCode((code - num) % 26)
         } else if (code >= 97 && code <= 122) {
@@ -20,7 +19,7 @@ exports.getDecodePhrase = (phrase, number) => {
         } else {
             if (code === 32) {
                 c = ' '
-            } else if (code === 58 || code === 46) {
+            } else if (code === 58 || code === 46 || (code >= 48 && code <= 57)) {
                 c = String.fromCharCode(code)
             }
         }
