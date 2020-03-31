@@ -1,18 +1,26 @@
 const fs = require('fs');
-const contentFilePath = './answer.json';
+require('dotenv/config');
 
-function save(content) {
+const contentFilePath = './src/states/';
+
+const save = (content, fileNameWithoutExtencion) => {
     const contentString = JSON.stringify(content)
-    return fs.writeFileSync(contentFilePath, contentString)
+    return fs.writeFileSync(`${contentFilePath}${fileNameWithoutExtencion}.json`, contentString)
 }
 
-function load() {
-    const fileBuffer = fs.readFileSync(contentFilePath, 'utf-8')
+const load = (fileNameWithoutExtencion) => {
+    const fileBuffer = fs.readFileSync(`${contentFilePath}${fileNameWithoutExtencion}.json`, 'utf-8')
     const contentJson = JSON.parse(fileBuffer)
     return contentJson
 }
 
+const loadReadStream = async (fileNameWithoutExtencion) => {
+    const fileStream = fs.createReadStream(`${contentFilePath}${fileNameWithoutExtencion}.json`, 'utf-8')
+    return fileStream
+}
+
 module.exports = {
     save,
-    load
+    load,
+    loadReadStream
 }
