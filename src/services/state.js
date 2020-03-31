@@ -1,7 +1,7 @@
 const fs = require('fs');
 require('dotenv/config');
 
-const contentFilePath = './src/states/';
+const contentFilePath = process.env.DATABASE_LOCATION;
 
 const save = (content, fileNameWithoutExtencion) => {
     const contentString = JSON.stringify(content)
@@ -14,9 +14,8 @@ const load = (fileNameWithoutExtencion) => {
     return contentJson
 }
 
-const loadReadStream = async (fileNameWithoutExtencion) => {
-    const fileStream = fs.createReadStream(`${contentFilePath}${fileNameWithoutExtencion}.json`, 'utf-8')
-    return fileStream
+const loadReadStream = (fileNameWithoutExtencion) => {
+    return  fs.createReadStream(`${contentFilePath}${fileNameWithoutExtencion}.json`)
 }
 
 module.exports = {

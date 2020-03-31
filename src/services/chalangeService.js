@@ -2,26 +2,31 @@ const api = require('../services/api')
 const state = require('../services/state')
 const { getDecodePhrase } = require('../services/utils')
 const cryptoService = require('../services/cryptoService')
-var FormData = require('form-data');
+const FormData = require('form-data');
+const request = require('request');
+const axios = require('axios')
 require('dotenv/config');
 
-getGenerateData = async (req, res) => {
+
+function saveDataInFile(data) {
+    state.save(data, 'answer')
+}
+
+function loadJsonDataFromFile() {
+    return state.load('answer')
+}
+
+function loadFileDataFromFile() {
+    return state.loadReadStream('answer')
+}
+
+async function getGenerateDataAndSaveInFile() {
     const response = await api.get(`/generate-data?token=${process.env.API_TOKEN}`)
-
-    return response
+    saveDataInFile(response.data) 
 }
 
-saveAnswerInFile = (data) => {
-    state.save(response.data, 'answer')
-}
-
-loadAnswerFromFile = () => {
-    state.load('answer')
-}
-
-
-decipherAndSaveInFile = async () => {
-    const data = loadAnswerFromFile()
+async function loadAnswerFileAndDecipher() {
+    const data = loadJsonDataFromFile()
     
     const {cifrado, numero_casas} = data
 
@@ -31,30 +36,41 @@ decipherAndSaveInFile = async () => {
     data.decifrado = decifrado  
     data.resumo_criptografico = resumo_criptografico
 
-    state.save(data, 'answer')
+    saveDataInFile(data)
 }
 
-loadAnswerAndSendChalange = async () => {
-    const file = await state.loadReadStream('answer')
-    const formData = new FormData()
-    
-    formData.append('file', file)
-    formData.append('name', "answer")
+async function sendAnswerChalange() {
+    const answer = new FormData();
+    answer.append('answer', loadFileDataFromFile());
 
-    const r = await api.post(`/submit-solution?token=${process.env.API_TOKEN}`,
-        { data: formData }
-    )
-    
-    return r
+    const response = await api.post(
+        `/submit-solution?token=${process.env.API_TOKEN}`, 
+        answer,
+        { headers: answer.getHeaders(), },
+    );
+
+    return response
 }
 
-exports.createAnswer = async (req, res) => {
-    const response = await getGenerateData()
-
-    saveAnswerInFile(response.data)
-    await decipherAndSaveInFile()    
-
-    response = await loadAnswerAndSendChalange()
+exports.createAndSendAnswer = async (req, res) => {
+    try{
+        await getGenerateDataAndSaveInFile()
+        
+        await loadAnswerFileAndDecipher();
+        const response = await sendAnswerChalange()
+   
+        res.json(response.data)
+    } catch(err) {
+        if(err && err.response && err.response.data && err.response.data.code) {
+            res.status(err.response.status)
+            .json({code: err.response.data.code, error: err.response.data.error, message: err.response.data.message  })
+        } else {
+            console.log(err)
+            res.status(500).json({status: 500, message: 'Uninspected server error 500', name: 'Internal Server Error'})
+        }
+    }
     
-    res.json(response.data)
+    
+   
+    
 }
