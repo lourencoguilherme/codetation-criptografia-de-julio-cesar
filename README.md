@@ -1,44 +1,57 @@
-# codenation-cesar
-Meus arquivos do desafio da criptografia de Júlio César
-## receber  o desafio
-Entrar na conta da Codenation, e pegar o número TOKEN pessoal.
+# Criptografia de Júlio César
 
-Adicionar o TOKEN na URL https://api.codenation.dev/v1/challenge/dev-ps/generate-data?token=SEU_TOKEN substituindo o campo SEU_TOKEN pelo número obtido.
+Segundo o Wikipedia, criptografia ou criptologia (em grego: kryptós, “escondido”, e gráphein, “escrita”) é o estudo e prática de princípios e técnicas para comunicação segura na presença de terceiros, chamados “adversários”. Mas geralmente, a criptografia refere-se à construção e análise de protocolos que impedem terceiros, ou o público, de lerem mensagens privadas. Muitos aspectos em segurança da informação, como confidencialidade, integridade de dados, autenticação e não-repúdio são centrais à criptografia moderna. Aplicações de criptografia incluem comércio eletrônico, cartões de pagamento baseados em chip, moedas digitais, senhas de computadores e comunicações militares. Das Criptografias mais curiosas na história da humanidade podemos citar a criptografia utilizada pelo grande líder militar romano Júlio César para comunicar com os seus generais. Essa criptografia se baseia na substituição da letra do alfabeto avançado um determinado número de casas. Por exemplo, considerando o número de casas = 3:
 
-Criar um aqruivo de nome answer.json com os dados recebidos.
-## resolver o desafio
-O desafio consiste em resolver o problema recebido na etapa acima, que é uma frase criptograda. Usar a criptografia de César para obter a frase decifrada.
 
-Para esse desafio eu usei um programa em C para me ajudar a decriptar a frase.
+Normal: a ligeira raposa marrom saltou sobre o cachorro cansado
 
-Problemas:
+Cifrado: d oljhlud udsrvd pduurp vdowrx vreuh r fdfkruur fdqvdgr
 
-Meu programa só decifra palavras, não decifra frases por causa dos espaços. Vou trabalhar nisso.
+#### Regras
+As mensagens serão convertidas para minúsculas tanto para a criptografia quanto para descriptografia.
+No nosso caso os números e pontos serão mantidos, ou seja:
+Normal: 1a.a
 
-Usei um programa online para fazer o resumo criptográfico usando o algoritmo sha1 [http://www.sha1-online.com/](http://www.sha1-online.com/)
+Cifrado: 1d.d
 
-Atualizei o arquivo answer.json com os dados obtidos.
-## enviar o desafio
-Novamente adicionar o TOKEN na URL de envio, https://api.codenation.dev/v1/challenge/dev-ps/submit-solution?token=SEU_TOKEN , substituindo SEU_TOKEN pelo número de token disponivel na página da Codenation.
+Escrever programa, em qualquer linguagem de programação, que faça uma requisição HTTP para a url abaixo:
+```
+https://api.codenation.dev/v1/challenge/dev-ps/generate-data?token=SEU_TOKEN
+```
 
-Para a submissão, utilizei o programa POSTMAN, disponível em [https://www.getpostman.com/downloads/](https://www.getpostman.com/downloads/) , usando os devidos parâmetros pedidos para o desafio.
-## Score Esperado
-É esperado atingir 100% nesse desafio.
-## Score atingido
-100%
+Para encontrar o seu token , acesse a plataforma Codenation, faça o login e a informação estará na tela.
+
+O resultado da requisição vai ser um JSON conforme o exemplo:
+
+```
+{
+	"numero_casas": 10,
+	"token":"token_do_usuario",
+	"cifrado": "texto criptografado",
+	"decifrado": "aqui vai o texto decifrado",
+	"resumo_criptografico": "aqui vai o resumo"
+}
+```
+
+O primeiro passo é você salvar o conteúdo do JSON em um arquivo com o nome answer.json, que irá usar no restante do desafio.
+
+Você deve usar o número de casas para decifrar o texto e atualizar o arquivo JSON, no campo decifrado. O próximo passo é gerar um resumo criptográfico do texto decifrado usando o algoritmo sha1 e atualizar novamente o arquivo JSON. OBS: você pode usar qualquer biblioteca de criptografia da sua linguagem de programação favorita para gerar o resumo sha1 do texto decifrado.
+
+Seu programa deve submeter o arquivo atualizado para correção via POST para a API:
+
+```
+https://api.codenation.dev/v1/challenge/dev-ps/submit-solution?token=SEU_TOKEN
+
+```
+
+OBS: a API espera um arquivo sendo enviado como multipart/form-data, como se fosse enviado por um formulário HTML, com um campo do tipo file com o nome answer. Considere isso ao enviar o arquivo.
+
+O resultado da submissão vai ser sua nota ou o erro correspondente. Você pode submeter quantas vezes achar necessário, mas a API não vai permitir mais de uma submissão por minuto.
+
+
 ## contato
-Erica Suguimoto
+Guilherme Lourenco
 
-[esuguimo@student.42sp.org.br](mailto:esuguimo@student.42sp.org.br)
+[guilhermemonteirolourenco@gmail.com](guilhermemonteirolourenco@gmail.com)
 
-[ericasugui@gmail.com](mailto:ericasugui@gmail.com)
-
-
-
-### Para verificar modo debug
-```
-    chrome://inspect/#devices
-
-    
-
-```
+[guilhermemonteirolourenco@gmail.com](guilhermemonteirolourenco@gmail.com)
