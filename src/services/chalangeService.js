@@ -3,8 +3,7 @@ const state = require('../services/state')
 const { getDecodePhrase } = require('../services/utils')
 const cryptoService = require('../services/cryptoService')
 const FormData = require('form-data');
-const request = require('request');
-const axios = require('axios')
+const TooManyRequestsError = require('../errors/TooManyRequestsError')
 require('dotenv/config');
 
 
@@ -52,21 +51,34 @@ async function sendAnswerChalange() {
     return response
 }
 
-exports.createAndSendAnswer = async (req, res) => {
+exports.createAndSendAnswer = async () => {
     try{
         await getGenerateDataAndSaveInFile()
         
         await loadAnswerFileAndDecipher();
-        const response = await sendAnswerChalange()
-   
-        res.json(response.data)
+        const response = await sendAnswerChalange()        
+        const { score } = response.data
+        const { status } = response
+        
+        const data = {
+            status,
+            name: 'OK',
+            score,
+            message: 'Upload successful!',            
+        }
+
+        return data
     } catch(err) {
-        if(err && err.response && err.response.data && err.response.data.code) {
-            res.status(err.response.status)
-            .json({code: err.response.data.code, error: err.response.data.error, message: err.response.data.message  })
+        if(err && err.response && err.response.data && err.response.data.code) {            
+            
+            throw new TooManyRequestsError(
+                err.response.data.code, 
+                err.response.data.error,
+                err.response.data.error, 
+                err.response.data.message   
+            );
         } else {
-            console.log(err)
-            res.status(500).json({status: 500, message: 'Uninspected server error 500', name: 'Internal Server Error'})
+            throw new ApplicationError ()
         }
     }
     
