@@ -4,8 +4,6 @@ const { getDecodePhrase } = require('../services/utils')
 const cryptoService = require('../services/cryptoService')
 const FormData = require('form-data');
 const TooManyRequestsError = require('../errors/TooManyRequestsError')
-require('dotenv/config');
-
 
 function saveDataInFile(data) {
     state.save(data, 'answer')
@@ -20,7 +18,7 @@ function loadFileDataFromFile() {
 }
 
 async function getGenerateDataAndSaveInFile() {
-    const response = await api.get(`/generate-data?token=${process.env.API_TOKEN}`)
+    const response = await api.get(`/generate-data`)
     saveDataInFile(response.data) 
 }
 
@@ -43,7 +41,7 @@ async function sendAnswerChalange() {
     answer.append('answer', loadFileDataFromFile());
 
     const response = await api.post(
-        `/submit-solution?token=${process.env.API_TOKEN}`, 
+        `/submit-solution`, 
         answer,
         { headers: answer.getHeaders(), },
     );
